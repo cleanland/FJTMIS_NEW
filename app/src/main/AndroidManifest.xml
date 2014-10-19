@@ -25,10 +25,6 @@
             android:name=".testFra"
             android:label="@string/title_activity_test_fra" >
         </activity>
-        <activity
-            android:name=".mainpage"
-            android:label="@string/title_activity_mainpage" >
-        </activity>
     </application>
 
 </manifest>
