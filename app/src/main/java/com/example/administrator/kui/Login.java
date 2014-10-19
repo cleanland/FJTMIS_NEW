@@ -56,8 +56,8 @@ public class Login extends Activity {
                         // TODO Auto-generated method stub
                         super.onPostExecute(result);
                         if (result.equals("Y")) {
-                            startActivity(new Intent(Login.this, MyActivity.class));
-                            //startActivity(new Intent(Login.this,testFra.class));
+                            //startActivity(new Intent(Login.this, MyActivity.class));
+                            startActivity(new Intent(Login.this,MainActivity.class));
                         } else {
                             if (result.isEmpty()) result = "无法正确连接到服务器。";//999
                             Toast.makeText(Login.this, "" + result, Toast.LENGTH_LONG).show();
@@ -111,7 +111,7 @@ public class Login extends Activity {
                         !((EditText) findViewById(R.id.account)).getText().toString().isEmpty() &&
                         !((EditText) findViewById(R.id.pwd)).getText().toString().isEmpty()
                 ) {
-            loginBtn.callOnClick();
+            loginBtn.performClick();//.callOnClick();
         }
     }
 
