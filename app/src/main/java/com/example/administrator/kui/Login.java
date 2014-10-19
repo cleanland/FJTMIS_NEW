@@ -59,6 +59,7 @@ public class Login extends Activity {
                             startActivity(new Intent(Login.this, MyActivity.class));
                             //startActivity(new Intent(Login.this,testFra.class));
                         } else {
+                            if (result == "") result = "无法正确连接到服务器。";   ////////
                             Toast.makeText(Login.this, "" + result, Toast.LENGTH_LONG).show();
                         }
                     }
