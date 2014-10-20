@@ -7,6 +7,7 @@ import android.graphics.Color;
 import android.os.Bundle;
 import android.support.v13.app.FragmentPagerAdapter;
 import android.support.v4.view.ViewPager;
+import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -14,9 +15,19 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
+import com.example.administrator.kui.dummy.BlogFragment;
+
 import java.util.Locale;
 
 
+/**
+ * 利用VIEWPAGER，组织FJTMIS的多个页面。导航条。底部。
+ * 利用VIEWPAGER，组织FJTMIS的多个页面。导航条。底部。
+ * 利用VIEWPAGER，组织FJTMIS的多个页面。导航条。底部。
+ * 利用VIEWPAGER，组织FJTMIS的多个页面。导航条。底部。
+ * 利用VIEWPAGER，组织FJTMIS的多个页面。导航条。底部。
+ * 利用VIEWPAGER，组织FJTMIS的多个页面。导航条。底部。
+ */
 public class MainActivity extends Activity {
     SectionsPagerAdapter mSectionsPagerAdapter;
     ViewPager mViewPager;
@@ -57,12 +68,46 @@ public class MainActivity extends Activity {
         return super.onOptionsItemSelected(item);
     }
 
+    /**
+     * A placeholder fragment containing a simple view.
+     */
+    public static class PlaceholderFragment extends Fragment {
+        /**
+         * The fragment argument representing the section number for this
+         * fragment.
+         */
+        private static final String ARG_SECTION_NUMBER = "section_number";
 
+        public PlaceholderFragment() {
+        }
 
         /**
          * Returns a new instance of this fragment for the given section
          * number.
          */
+        public static PlaceholderFragment newInstance(int sectionNumber) {
+            PlaceholderFragment fragment = new PlaceholderFragment();
+            Bundle args = new Bundle();
+            args.putInt(ARG_SECTION_NUMBER, sectionNumber);
+            fragment.setArguments(args);
+            return fragment;
+        }
+
+        @Override
+        public View onCreateView(LayoutInflater inflater, ViewGroup container,
+                                 Bundle savedInstanceState) {
+            View rootView = inflater.inflate(R.layout.fragment_my, container, false);
+            TextView tv = (TextView) rootView.findViewById(R.id.section_label);
+            tv.setText(Math.random() + "");
+            rootView.setBackgroundColor(Color.RED);
+            return rootView;
+        }
+    }
+
+    /**
+     * Returns a new instance of this fragment for the given section
+     * number.
+     */
     public class SectionsPagerAdapter extends FragmentPagerAdapter {
 
         public SectionsPagerAdapter(FragmentManager fm) {
@@ -70,11 +115,12 @@ public class MainActivity extends Activity {
         }
 
         @Override
-        public Fragment getItem(int position) {
+        public Fragment getItem(final int position) {
             // getItem is called to instantiate the fragment for the given page.
             // Return a PlaceholderFragment (defined as a static inner class below).
             // 创建并返回FRA。。。。
-            return PlaceholderFragment.newInstance(position + 1);
+            return new fra();
+            //return PlaceholderFragment.newInstance(position + 1);
         }
 
         @Override
@@ -95,42 +141,6 @@ public class MainActivity extends Activity {
                     return getString(R.string.title_section3).toUpperCase(l);
             }
             return null;
-        }
-    }
-
-    /**
-     * A placeholder fragment containing a simple view.
-     */
-    public static class PlaceholderFragment extends Fragment {
-        /**
-         * The fragment argument representing the section number for this
-         * fragment.
-         */
-        private static final String ARG_SECTION_NUMBER = "section_number";
-
-        /**
-         * Returns a new instance of this fragment for the given section
-         * number.
-         */
-        public static PlaceholderFragment newInstance(int sectionNumber) {
-            PlaceholderFragment fragment = new PlaceholderFragment();
-            Bundle args = new Bundle();
-            args.putInt(ARG_SECTION_NUMBER, sectionNumber);
-            fragment.setArguments(args);
-            return fragment;
-        }
-
-        public PlaceholderFragment() {
-        }
-
-        @Override
-        public View onCreateView(LayoutInflater inflater, ViewGroup container,
-                Bundle savedInstanceState) {
-            View rootView = inflater.inflate(R.layout.fragment_my, container, false);
-            TextView tv = (TextView) rootView.findViewById(R.id.section_label);
-            tv.setText(Math.random()+"");
-            rootView.setBackgroundColor(Color.RED);
-            return rootView;
         }
     }
 
