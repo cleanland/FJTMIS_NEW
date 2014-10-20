@@ -46,6 +46,9 @@ public class Login extends Activity {
         EditText siteUrl = (EditText) findViewById(R.id.siteUrl);
         siteUrl.setText(((MyApplication) getApplication()).getSiteUrl());
 
+        if(siteUrl.getText().toString().isEmpty())
+            siteUrl.setText("http://fjtmis.huijumall.com");
+
         EditText acc = (EditText) findViewById(R.id.account);
         acc.setText(preferences.getString("account", ""));
 

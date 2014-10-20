@@ -23,6 +23,8 @@ public class Act_BlogDetail extends Activity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        setTitle("工作日志");
+
         //$.GET blogData from server:
         //by session implicitly...
         new AsyncTask<Void, Void, String>() {

@@ -23,6 +23,7 @@ public class Act_CustDetail01 extends Activity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        setTitle("客户详细资料");
         // setContentView(R.layout.activity_act__cust_detail01);
         new AsyncTask<Void, Void, String>() {
             @Override
