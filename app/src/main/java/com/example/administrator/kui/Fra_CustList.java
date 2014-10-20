@@ -1,18 +1,14 @@
 package com.example.administrator.kui;
 
 import android.app.Activity;
+import android.app.Fragment;
 import android.content.Intent;
 import android.database.DataSetObserver;
-import android.graphics.Color;
-import android.graphics.drawable.ColorDrawable;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.view.LayoutInflater;
-import android.view.Menu;
-import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.LinearLayout;
 import android.widget.ListAdapter;
 import android.widget.ListView;
 import android.widget.TextView;
@@ -25,49 +21,36 @@ import org.json.JSONObject;
 import java.net.URL;
 import java.util.LinkedList;
 
-
 /**
- * 显示工作日志列表
+ * Created by Administrator on 2014/10/20.
+ * 显示客户列表
  */
-public class MyActivity extends Activity {
-
+public class Fra_CustList extends Fragment {
     @Override
-    protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_my);
-        //$.GET listData from server:
-        //by session implicitly...
+    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+        if (false) {
+            TextView tvx = new TextView(getActivity());
+            tvx.setText("adsfadsf");
+            if (true) return tvx;
+            //以上已能正确执行。。。
+            //每个NEW出来的本类对象都只显示一个TEXTVIEW即可。
+        }
+
+        final View rootview = inflater.inflate(R.layout.custlist, container, false);
+
         new AsyncTask<Void, Void, String>() {
             @Override
             protected void onPostExecute(String result) {
                 // TODO Auto-generated method stub
                 super.onPostExecute(result);
-                // TODO bind data to the list of this page:
-                /*
-                {
-                    "page": 1,
-                    "total": 16,
-                    "rows": [
-                        {
-                            "ID": 16,
-                            "BlogTypeID_DisplayText": "未分类",
-                            "Title": "dddddddd",
-                            "ClickedCount": 0,
-                            "RegEmpID_DisplayText": "管理员22233",
-                            "RegEmpID": 2,
-                            "RegTime": "2013-11-05 18:11:36",
-                            "ModTime": "2014-06-27 17:45:07"
-                        }
-                    ]
-                }
-                */
 
+                // TODO bind data to the list of this page:
                 JSONObject jsobj = null;
                 try {
-                    final MyActivity ctx = MyActivity.this;
+                    final Activity ctx = getActivity();
                     jsobj = new JSONObject(result);
                     final JSONArray listjson = jsobj.getJSONArray("rows");
-                    ListView lv = new ListView(MyActivity.this);
+                    ListView lv = (ListView) rootview.findViewById(R.id.listView);
                     lv.setDividerHeight(2);
 
                     final LayoutInflater inflater = LayoutInflater.from(ctx);
@@ -125,14 +108,26 @@ public class MyActivity extends Activity {
 
                             try {
                                 final JSONObject obj = listjson.getJSONObject(position);
-                                    /*"ID": 16,
-                                    "BlogTypeID_DisplayText": "未分类",
-                                    "Title": "dddddddd",
-                                    "ClickedCount": 0,
-                                    "RegEmpID_DisplayText": "管理员22233",
-                                    "RegEmpID": 2,
-                                    "RegTime": "2013-11-05 18:11:36",
-                                    "ModTime": "2014-06-27 17:45:07"*/
+                                    /*
+                                    "ID": 6,
+                                    "Name": "kkk",
+                                    "WebSiteID_DisplayText": "本机BSFJT12",
+                                    "WebSiteID": 26,
+                                    "SourceID": 14,
+                                    "Addr": "森",
+                                    "City": "",
+                                    "CreateTime": "",
+                                    "TestTime": "",
+                                    "BeginTime": "",
+                                    "EndTime": "",
+                                    "Status": "试用",
+                                    "Memo": "ccc",
+                                    "ModTime": "2013-10-16 14:01:19",
+                                    "FlagDeleted": false,
+                                    "Spell": "kkk",
+                                    "EmpID_DisplayText": "管理员22233",
+                                    "EmpID": 2
+                                    */
 
                                 view.setText(obj.getString("RegEmpID_DisplayText") + "@" + obj.getString("Title"));
                                 view.setOnClickListener(new View.OnClickListener() {
@@ -172,9 +167,6 @@ public class MyActivity extends Activity {
                         }
                     });
 
-                    LinearLayout layout = (LinearLayout) MyActivity.this.findViewById(R.id.page);
-                    layout.addView(lv);
-
                 } catch (JSONException e) {
                     e.printStackTrace();
                 }
@@ -184,7 +176,14 @@ public class MyActivity extends Activity {
             protected String doInBackground(Void... arg0) {
                 try {
                     LinkedList params = new LinkedList<BasicNameValuePair>();
-                    URL url = new URL(((MyApplication) getApplication()).getSiteUrl() + "/Office/GetBlogList");
+                    params.add(new BasicNameValuePair("page", "1"));
+                    params.add(new BasicNameValuePair("rp", "20"));
+                    params.add(new BasicNameValuePair("sortname", "ID"));
+                    params.add(new BasicNameValuePair("sortorder", "desc"));
+                    params.add(new BasicNameValuePair("query", "{Date1:\"\",sCon1:\"\"}"));
+                    params.add(new BasicNameValuePair("qtype", "sql"));
+                    params.add(new BasicNameValuePair("iegohell", "1413782533798"));
+                    URL url = new URL(((MyApplication) getActivity().getApplication()).getSiteUrl() + "/CustomerManage/GetCompanyList");
                     return CwyWebJSON.postToUrl(url.toString(), params);
                 } catch (Exception e) {
                     e.printStackTrace();
@@ -192,24 +191,7 @@ public class MyActivity extends Activity {
                 return "";
             }
         }.execute();
-    }
 
-    @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        // Inflate the menu; this adds items to the action bar if it is present.
-        getMenuInflater().inflate(R.menu.my, menu);
-        return true;
-    }
-
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        // Handle action bar item clicks here. The action bar will
-        // automatically handle clicks on the Home/Up button, so long
-        // as you specify a parent activity in AndroidManifest.xml.
-        int id = item.getItemId();
-        if (id == R.id.action_settings) {
-            return true;
-        }
-        return super.onOptionsItemSelected(item);
+        return rootview;
     }
 }

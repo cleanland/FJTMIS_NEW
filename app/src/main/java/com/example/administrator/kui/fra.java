@@ -81,7 +81,7 @@ public class fra extends Fragment {
                     tv.setGravity(Gravity.CENTER);
                     tv.setTextSize(30);
                     tv.setTextColor(Color.BLACK);
-                    tv.setText("Page " + 23);
+                    tv.setText("Page " + 0);
                     return tv;
                 }
 

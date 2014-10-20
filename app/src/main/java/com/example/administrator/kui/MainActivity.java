@@ -119,6 +119,17 @@ public class MainActivity extends Activity {
             // getItem is called to instantiate the fragment for the given page.
             // Return a PlaceholderFragment (defined as a static inner class below).
             // 创建并返回FRA。。。。
+            switch (position){
+                case 0:{
+                    return new fra();
+                }
+                case 1:{
+                    return new Fra_CustList();
+                }
+                case 2:{
+                    return new fra();
+                }
+            }
             return new fra();
             //return PlaceholderFragment.newInstance(position + 1);
         }
