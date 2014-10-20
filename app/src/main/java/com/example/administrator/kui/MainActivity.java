@@ -36,6 +36,7 @@ public class MainActivity extends Activity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+        setTitle("房介通内部管理系统");
 
         // Create the adapter that will return a fragment for each of the three
         // primary sections of the activity.
@@ -121,7 +122,7 @@ public class MainActivity extends Activity {
             // 创建并返回FRA。。。。
             switch (position){
                 case 0:{
-                    return new fra();
+                    return new Fra_BlogList();
                 }
                 case 1:{
                     return new Fra_CustList();

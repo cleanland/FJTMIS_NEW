@@ -122,8 +122,9 @@ public class Login extends Activity {
             //region TEST AREA
             if (false) {
 
-                //get loyout by findViewById:
+                //get loyout by findViewById:★★★★★★★★★★★★★★★★★★★★★★
                 LinearLayout layout = (LinearLayout) findViewById(R.id.rootLayout);
+
                 TextView tv = new TextView(this);
                 tv.setBackgroundColor(Color.RED);
                 tv.setText("23232323");
@@ -215,7 +216,7 @@ public class Login extends Activity {
             }
             //endregion
 
-            loginBtn.performClick();//.callOnClick();
+            loginBtn.performClick();
         }
     }
 

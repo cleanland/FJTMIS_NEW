@@ -85,8 +85,8 @@ public class CwyWebJSON {
      * @return
      * @throws Exception
      */
-    protected static String postToUrl(String url,
-                                      LinkedList<BasicNameValuePair> params)
+    public static String postToUrl(String url,
+                                   LinkedList<BasicNameValuePair> params)
             throws Exception {
         // params = new LinkedList<BasicNameValuePair>();
         // params.add(new BasicNameValuePair("param1", "Post方法"));

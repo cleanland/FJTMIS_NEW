@@ -4,7 +4,6 @@ import android.app.Activity;
 import android.app.Fragment;
 import android.content.Intent;
 import android.database.DataSetObserver;
-import android.graphics.Color;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.view.LayoutInflater;
@@ -26,7 +25,7 @@ import java.util.LinkedList;
  * Created by Administrator on 2014/10/20.
  * 显示客户列表
  */
-public class Fra_CustList extends Fragment {
+public class Fra_BlogList extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
 
@@ -104,23 +103,23 @@ public class Fra_CustList extends Fragment {
 
                             try {
                                 final JSONObject obj = listjson.getJSONObject(position);
-                                String man = "没人管";
-                                if (obj.has("EmpID_DisplayText")) {
+                                    /*"ID": 16,
+                                    "BlogTypeID_DisplayText": "未分类",
+                                    "Title": "dddddddd",
+                                    "ClickedCount": 0,
+                                    "RegEmpID_DisplayText": "管理员22233",
+                                    "RegEmpID": 2,
+                                    "RegTime": "2013-11-05 18:11:36",
+                                    "ModTime": "2014-06-27 17:45:07"*/
 
-                                    man = obj.getString("EmpID_DisplayText");
-                                }
-                                view.setBackgroundColor(Color.parseColor("#FFE7FFC2"));
-                                view.setText(obj.getString("Name") + //公司
-                                        " By " + man + "@" + //by whom @ which siteUrl
-                                        obj.getString("WebSiteID_DisplayText") + ".");
-
+                                view.setText(obj.getString("RegEmpID_DisplayText") + "@" + obj.getString("Title"));
                                 view.setOnClickListener(new View.OnClickListener() {
                                     @Override
                                     public void onClick(View v) {
                                         try {
                                             JSONObject pos = listjson.getJSONObject(position);
                                             int id = pos.getInt("ID");
-                                            Intent newIntent = new Intent(ctx, Act_CustDetail01.class);
+                                            Intent newIntent = new Intent(ctx, Act_BlogDetail.class);
                                             newIntent.putExtra("id", id);
                                             startActivity(newIntent);
                                         } catch (JSONException e) {
@@ -159,14 +158,7 @@ public class Fra_CustList extends Fragment {
             protected String doInBackground(Void... arg0) {
                 try {
                     LinkedList params = new LinkedList<BasicNameValuePair>();
-                    params.add(new BasicNameValuePair("page", "1"));
-                    params.add(new BasicNameValuePair("rp", "20"));
-                    params.add(new BasicNameValuePair("sortname", "ID"));
-                    params.add(new BasicNameValuePair("sortorder", "desc"));
-                    params.add(new BasicNameValuePair("query", "{Date1:\"\",sCon1:\"\"}"));
-                    params.add(new BasicNameValuePair("qtype", "sql"));
-                    params.add(new BasicNameValuePair("iegohell", "1413782533798"));
-                    URL url = new URL(((MyApplication) getActivity().getApplication()).getSiteUrl() + "/CustomerManage/GetCompanyList");
+                    URL url = new URL(((MyApplication) getActivity().getApplication()).getSiteUrl() + "/Office/GetBlogList");
                     return CwyWebJSON.postToUrl(url.toString(), params);
                 } catch (Exception e) {
                     e.printStackTrace();
