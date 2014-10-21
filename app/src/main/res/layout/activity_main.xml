@@ -15,19 +15,24 @@
     <LinearLayout
         android:orientation="horizontal"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content">
+        android:layout_height="wrap_content"
+        android:weightSum="1">
 
-        <Button
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
+        <ImageButton
+            android:layout_width="40dp"
+            android:layout_height="38dp"
             android:text="日志"
-            android:id="@+id/button" />
+            android:id="@+id/button"
+            android:src="@drawable/fjtmisx"
+            android:scaleType="centerCrop" />
 
-        <Button
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="客户"
-            android:id="@+id/button3" />
+        <ImageButton
+            android:layout_width="40dp"
+            android:layout_height="38dp"
+            android:text="日志"
+            android:id="@+id/imageButton"
+            android:src="@drawable/fjtmisx"
+            android:scaleType="centerCrop"  />
 
         <SearchView
             android:layout_width="wrap_content"

@@ -1,6 +1,7 @@
 package com.example.administrator.kui;
 
 import android.app.Activity;
+import android.app.AlertDialog;
 import android.app.Fragment;
 import android.content.Intent;
 import android.database.DataSetObserver;
@@ -10,6 +11,7 @@ import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AbsListView;
 import android.widget.ListAdapter;
 import android.widget.ListView;
 import android.widget.TextView;
@@ -27,14 +29,16 @@ import java.util.LinkedList;
  * 显示客户列表
  */
 public class Fra_CustList extends Fragment {
+    JSONArray listjson;
+
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-
         //get layout by inflat...★★★★★★★★★★★★★★★★★★★★★★★★★★★★★
         final View rootview = inflater.inflate(R.layout.custlist, container, false);
-
         //异步加载数据。
         new AsyncTask<Void, Void, String>() {
+            public int pageno = 1;
+
             @Override
             protected void onPostExecute(String result) {
                 // TODO Auto-generated method stub
@@ -45,8 +49,8 @@ public class Fra_CustList extends Fragment {
                 try {
                     final Activity ctx = getActivity();
                     jsobj = new JSONObject(result);
-                    final JSONArray listjson = jsobj.getJSONArray("rows");
-                    ListView lv = (ListView) rootview.findViewById(R.id.listView);
+                    listjson = jsobj.getJSONArray("rows");//★★★★★★★★
+                    final ListView lv = (ListView) rootview.findViewById(R.id.listView);
                     lv.setDividerHeight(2);
 
                     final LayoutInflater inflater = LayoutInflater.from(ctx);
@@ -98,39 +102,45 @@ public class Fra_CustList extends Fragment {
 
                         @Override
                         public View getView(final int position, View convertView, ViewGroup parent) {
-                            convertView = inflater.inflate(R.layout.listitem_min, parent, false);
-                            TextView view = (TextView) convertView.findViewById(R.id.textView);
+                            ViewHolder viewHolder = null;
+                            if (null == convertView) {
+                                viewHolder = new ViewHolder();
+                                convertView = inflater.inflate(R.layout.listitem_min, parent, false);
+                                viewHolder.description = (TextView) convertView.findViewById(R.id.textView);
+                                try {
+                                    final JSONObject obj = listjson.getJSONObject(position);
+                                    String man = "没人管";
+                                    if (obj.has("EmpID_DisplayText")) {
 
-
-                            try {
-                                final JSONObject obj = listjson.getJSONObject(position);
-                                String man = "没人管";
-                                if (obj.has("EmpID_DisplayText")) {
-
-                                    man = obj.getString("EmpID_DisplayText");
-                                }
-                                view.setBackgroundColor(Color.parseColor("#FFE7FFC2"));
-                                view.setText(obj.getString("Name") + //公司
-                                        " By " + man + "@" + //by whom @ which siteUrl
-                                        obj.getString("WebSiteID_DisplayText") + ".");
-
-                                view.setOnClickListener(new View.OnClickListener() {
-                                    @Override
-                                    public void onClick(View v) {
-                                        try {
-                                            JSONObject pos = listjson.getJSONObject(position);
-                                            int id = pos.getInt("ID");
-                                            Intent newIntent = new Intent(ctx, Act_CustDetail01.class);
-                                            newIntent.putExtra("id", id);
-                                            startActivity(newIntent);
-                                        } catch (JSONException e) {
-                                            e.printStackTrace();
-                                        }
+                                        man = obj.getString("EmpID_DisplayText");
                                     }
-                                });
-                            } catch (JSONException e) {
-                                e.printStackTrace();
+                                    viewHolder.description.setBackgroundColor(Color.parseColor("#FFE7FFC2"));
+                                    viewHolder.description.setText(obj.getString("Name") + //公司
+                                            " By " + man + "@" + //by whom @ which siteUrl
+                                            obj.getString("WebSiteID_DisplayText") + ".");
+
+                                    viewHolder.description.setOnClickListener(new View.OnClickListener() {
+                                        @Override
+                                        public void onClick(View v) {
+                                            try {
+                                                JSONObject pos = listjson.getJSONObject(position);
+                                                int id = pos.getInt("ID");
+                                                Intent newIntent = new Intent(ctx, Act_CustDetail01.class);
+                                                newIntent.putExtra("id", id);
+                                                startActivity(newIntent);
+                                            } catch (JSONException e) {
+                                                e.printStackTrace();
+                                            }
+                                        }
+                                    });
+                                } catch (JSONException e) {
+                                    e.printStackTrace();
+                                }
+                                convertView.setTag(viewHolder);
+                            } else {
+                                viewHolder = (ViewHolder) convertView.getTag();
                             }
+                            // set item values to the viewHolder:
                             return convertView;
                         }
 
@@ -150,6 +160,72 @@ public class Fra_CustList extends Fragment {
                         }
                     });
 
+                    //实现下拉加载更多的效果。
+                    lv.setOnScrollListener(new AbsListView.OnScrollListener() {
+                        @Override
+                        public void onScrollStateChanged(AbsListView view,int scrollState) {
+                            // TODO Auto-generated method stub
+                            int threshold = 1;
+                            int count = lv.getCount();
+                            if (scrollState == SCROLL_STATE_IDLE) {
+                                if (lv.getLastVisiblePosition() >= count - threshold) {
+                                    // Execute LoadMoreDataTask AsyncTask
+                                    new AsyncTask<Void, Void, String>() {
+                                        @Override
+                                        protected String doInBackground(Void... arg0) {
+                                            try {
+                                                LinkedList params = new LinkedList<BasicNameValuePair>();
+                                                params.add(new BasicNameValuePair("page", "" + (pageno++)));
+                                                params.add(new BasicNameValuePair("rp", "20"));
+                                                params.add(new BasicNameValuePair("sortname", "ID"));
+                                                params.add(new BasicNameValuePair("sortorder", "desc"));
+                                                params.add(new BasicNameValuePair("query", "{Date1:\"\",sCon1:\"\"}"));
+                                                params.add(new BasicNameValuePair("qtype", "sql"));
+                                                params.add(new BasicNameValuePair("iegohell", "1413782533798"));
+                                                URL url = new URL(((MyApplication) getActivity().getApplication()).getSiteUrl() + "/CustomerManage/GetCompanyList");
+                                                return CwyWebJSON.postToUrl(url.toString(), params);
+                                            } catch (Exception e) {
+                                                e.printStackTrace();
+                                            }
+                                            return "";
+                                        }
+
+                                        @Override
+                                        protected void onPostExecute(String s) {
+                                            super.onPostExecute(s);
+                                            try {
+                                                //由于不想搞新MODEL，所以反复追加字符串吧。。。
+                                                String olds = listjson.toString();
+
+                                                JSONObject newdata = new JSONObject(s);
+                                                String news = newdata.getJSONArray("rows").toString();
+
+                                                String newResult = olds.substring(0, olds.length() - 1);
+                                                if (!news.isEmpty())
+                                                    newResult += "," + news.substring(1);
+                                                listjson = new JSONArray(newResult);//★★★★★★★★
+
+                                                //回归正路：
+                                                int position = lv.getLastVisiblePosition();
+                                                lv.setSelectionFromTop(position, 0);
+                                            } catch (JSONException e) {
+                                                e.printStackTrace();
+                                            }
+                                        }
+                                    }.execute();
+                                }
+                            }
+                        }
+
+                        @Override
+                        public void onScroll(AbsListView view, int firstVisibleItem,
+                                             int visibleItemCount, int totalItemCount) {
+                            // TODO Auto-generated method stub
+
+                        }
+
+                    });
+
                 } catch (JSONException e) {
                     e.printStackTrace();
                 }
@@ -159,7 +235,7 @@ public class Fra_CustList extends Fragment {
             protected String doInBackground(Void... arg0) {
                 try {
                     LinkedList params = new LinkedList<BasicNameValuePair>();
-                    params.add(new BasicNameValuePair("page", "1"));
+                    params.add(new BasicNameValuePair("page", "" + (pageno++)));
                     params.add(new BasicNameValuePair("rp", "20"));
                     params.add(new BasicNameValuePair("sortname", "ID"));
                     params.add(new BasicNameValuePair("sortorder", "desc"));
@@ -176,5 +252,17 @@ public class Fra_CustList extends Fragment {
         }.execute();
 
         return rootview;
+    }
+
+    private void Alert(String info) {
+        AlertDialog.Builder dialog = new AlertDialog.Builder(getActivity());
+        dialog.setTitle("提示");
+        dialog.setMessage(info);
+        dialog.setPositiveButton("确定", null);
+        dialog.show();
+    }
+
+    private static class ViewHolder {
+        TextView description;
     }
 }

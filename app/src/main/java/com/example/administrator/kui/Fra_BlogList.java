@@ -25,10 +25,10 @@ import java.util.LinkedList;
  * Created by Administrator on 2014/10/20.
  * 显示客户列表
  */
+
 public class Fra_BlogList extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-
         //get layout by inflat...★★★★★★★★★★★★★★★★★★★★★★★★★★★★★
         final View rootview = inflater.inflate(R.layout.custlist, container, false);
 
@@ -97,39 +97,36 @@ public class Fra_BlogList extends Fragment {
 
                         @Override
                         public View getView(final int position, View convertView, ViewGroup parent) {
-                            convertView = inflater.inflate(R.layout.listitem_min, parent, false);
-                            TextView view = (TextView) convertView.findViewById(R.id.textView);
-
-
-                            try {
-                                final JSONObject obj = listjson.getJSONObject(position);
-                                    /*"ID": 16,
-                                    "BlogTypeID_DisplayText": "未分类",
-                                    "Title": "dddddddd",
-                                    "ClickedCount": 0,
-                                    "RegEmpID_DisplayText": "管理员22233",
-                                    "RegEmpID": 2,
-                                    "RegTime": "2013-11-05 18:11:36",
-                                    "ModTime": "2014-06-27 17:45:07"*/
-
-                                view.setText(obj.getString("RegEmpID_DisplayText") + "@" + obj.getString("Title"));
-                                view.setOnClickListener(new View.OnClickListener() {
-                                    @Override
-                                    public void onClick(View v) {
-                                        try {
-                                            JSONObject pos = listjson.getJSONObject(position);
-                                            int id = pos.getInt("ID");
-                                            Intent newIntent = new Intent(ctx, Act_BlogDetail.class);
-                                            newIntent.putExtra("id", id);
-                                            startActivity(newIntent);
-                                        } catch (JSONException e) {
-                                            e.printStackTrace();
+                            ViewHolder viewHolder = null;
+                            if (null == convertView) {
+                                viewHolder = new ViewHolder();
+                                convertView = inflater.inflate(R.layout.listitem_min, parent, false);
+                                viewHolder.description = (TextView) convertView.findViewById(R.id.textView);
+                                try {
+                                    final JSONObject obj = listjson.getJSONObject(position);
+                                    viewHolder.description.setText(obj.getString("RegEmpID_DisplayText") + "@" + obj.getString("Title"));
+                                    viewHolder.description.setOnClickListener(new View.OnClickListener() {
+                                        @Override
+                                        public void onClick(View v) {
+                                            try {
+                                                JSONObject pos = listjson.getJSONObject(position);
+                                                int id = pos.getInt("ID");
+                                                Intent newIntent = new Intent(ctx, Act_BlogDetail.class);
+                                                newIntent.putExtra("id", id);
+                                                startActivity(newIntent);
+                                            } catch (JSONException e) {
+                                                e.printStackTrace();
+                                            }
                                         }
-                                    }
-                                });
-                            } catch (JSONException e) {
-                                e.printStackTrace();
+                                    });
+                                } catch (JSONException e) {
+                                    e.printStackTrace();
+                                }
+                                convertView.setTag(viewHolder);
+                            } else {
+                                viewHolder = (ViewHolder) convertView.getTag();
                             }
+                            // set item values to the viewHolder:
                             return convertView;
                         }
 
@@ -168,5 +165,9 @@ public class Fra_BlogList extends Fragment {
         }.execute();
 
         return rootview;
+    }
+
+    private static class ViewHolder {
+        TextView description;
     }
 }

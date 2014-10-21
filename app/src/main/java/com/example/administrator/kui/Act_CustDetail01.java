@@ -1,12 +1,19 @@
 package com.example.administrator.kui;
 
 import android.app.Activity;
+import android.database.DataSetObserver;
 import android.graphics.Color;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
+import android.view.ViewGroup;
+import android.widget.AbsListView;
 import android.widget.LinearLayout;
+import android.widget.ListAdapter;
+import android.widget.ListView;
 import android.widget.TextView;
 
 import org.apache.http.message.BasicNameValuePair;
@@ -24,6 +31,7 @@ public class Act_CustDetail01 extends Activity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setTitle("客户详细资料");
+
         // setContentView(R.layout.activity_act__cust_detail01);
         new AsyncTask<Void, Void, String>() {
             @Override
@@ -40,7 +48,7 @@ public class Act_CustDetail01 extends Activity {
                     TextView title = new TextView(ctx);
                     title.setPadding(10, 10, 10, 10);
                     title.setBackgroundColor(Color.GRAY);
-                    title.setText(jsobj.getString("WebSiteID_DisplayText") + "@" + jsobj.getString("CreateTime"));
+                    title.setText(jsobj.getString("Name") + "@" + jsobj.getString("WebSiteID_DisplayText") + "." + jsobj.getString("CreateTime"));
                     layout.addView(title);
 
                     TextView c = new TextView(ctx);
@@ -61,6 +69,138 @@ public class Act_CustDetail01 extends Activity {
                     URL url = new URL(((MyApplication) getApplication()).getSiteUrl() + "/CustomerManage/GetCompany?id=" +
                             Act_CustDetail01.this.getIntent().getExtras().getInt("id"));
 
+                    return CwyWebJSON.postToUrl(url.toString(), params);
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+                return "";
+            }
+        }.execute();
+
+        //加载上跟进信息：用LISTVIEW
+        new AsyncTask<Void, Void, String>() {
+            @Override
+            protected void onPostExecute(String result) {
+                // TODO Auto-generated method stub
+                super.onPostExecute(result);
+                // TODO bind data to the list of this page:
+                JSONObject jsobj = null;
+                try {
+                    final Activity ctx = Act_CustDetail01.this;
+                    jsobj = new JSONObject(result);
+                    final JSONArray[] listjson = {jsobj.getJSONArray("rows")};//★★★★★★★★
+                    final ListView lv = new ListView(ctx);
+                    lv.setDividerHeight(2);
+
+                    final LayoutInflater inflater = LayoutInflater.from(ctx);
+                    lv.setAdapter(new ListAdapter() {
+                        @Override
+                        public boolean areAllItemsEnabled() {
+                            return false;
+                        }
+
+                        @Override
+                        public boolean isEnabled(int position) {
+                            return true;
+                        }
+
+                        @Override
+                        public void registerDataSetObserver(DataSetObserver observer) {
+
+                        }
+
+                        @Override
+                        public void unregisterDataSetObserver(DataSetObserver observer) {
+
+                        }
+
+                        @Override
+                        public int getCount() {
+                            return listjson[0].length();
+                        }
+
+                        @Override
+                        public Object getItem(int position) {
+                            try {
+                                return listjson[0].getJSONObject(position);
+                            } catch (JSONException e) {
+                                e.printStackTrace();
+                            }
+                            return null;
+                        }
+
+                        @Override
+                        public long getItemId(int position) {
+                            return position;
+                        }
+
+                        @Override
+                        public boolean hasStableIds() {
+                            return true;
+                        }
+
+                        @Override
+                        public View getView(final int position, View convertView, ViewGroup parent) {
+                            ViewHolder viewHolder = null;
+                            if (null == convertView) {
+                                viewHolder = new ViewHolder();
+                                convertView = inflater.inflate(R.layout.listitem_min, parent, false);
+                                viewHolder.description = (TextView) convertView.findViewById(R.id.textView);
+                                try {
+                                    final JSONObject obj = listjson[0].getJSONObject(position);
+                                    String man = "出错了！";
+                                    if (obj.has("EmpID_DisplayText")) {
+
+                                        man = obj.getString("EmpID_DisplayText");
+                                    }
+                                    viewHolder.description.setBackgroundColor(Color.parseColor("#FFE7FFC2"));
+                                    viewHolder.description.setText(obj.getString("Memo") + //跟进内容
+                                            " By " + man + "@" + //by whom @ when
+                                            obj.getString("CreateTime") + ".");
+                                } catch (JSONException e) {
+                                    e.printStackTrace();
+                                }
+                                convertView.setTag(viewHolder);
+                            } else {
+                                viewHolder = (ViewHolder) convertView.getTag();
+                            }
+                            // set item values to the viewHolder:
+                            return convertView;
+                        }
+
+                        @Override
+                        public int getItemViewType(int position) {
+                            return 0;
+                        }
+
+                        @Override
+                        public int getViewTypeCount() {
+                            return 1;
+                        }
+
+                        @Override
+                        public boolean isEmpty() {
+                            return false;
+                        }
+                    });
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
+            }
+
+            @Override
+            protected String doInBackground(Void... arg0) {
+                try {
+                    LinkedList params = new LinkedList<BasicNameValuePair>();
+                    params.add(new BasicNameValuePair("page", "1"));
+                    params.add(new BasicNameValuePair("rp", "20"));
+                    params.add(new BasicNameValuePair("sortname", "ID"));
+                    params.add(new BasicNameValuePair("sortorder", "desc"));
+                    params.add(new BasicNameValuePair("query", "{{pid:\"" + Act_CustDetail01.this.getIntent().getExtras().getInt("id") + "\"}}"));
+                    params.add(new BasicNameValuePair("qtype", "sql"));
+                    params.add(new BasicNameValuePair("iegohell", "1413782533798"));
+                    URL url = new URL(((MyApplication) getApplication()).getSiteUrl() + "/CustomerManage/CompanyFollow_GetList" +
+                            Act_CustDetail01.this.getIntent().getExtras().getInt("id"));
                     return CwyWebJSON.postToUrl(url.toString(), params);
                 } catch (Exception e) {
                     e.printStackTrace();
@@ -91,5 +231,9 @@ public class Act_CustDetail01 extends Activity {
         }
 
         return super.onOptionsItemSelected(item);
+    }
+
+    private static class ViewHolder {
+        TextView description;
     }
 }
