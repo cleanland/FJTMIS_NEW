@@ -1,6 +1,7 @@
 package com.example.administrator.kui;
 
 import android.app.Activity;
+import android.content.Intent;
 import android.database.DataSetObserver;
 import android.graphics.Color;
 import android.os.AsyncTask;
@@ -10,11 +11,15 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.AbsListView;
+import android.widget.Button;
+import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.ListAdapter;
 import android.widget.ListView;
 import android.widget.TextView;
+import android.widget.Toast;
+
+import com.google.gson.Gson;
 
 import org.apache.http.message.BasicNameValuePair;
 import org.json.JSONArray;
@@ -31,6 +36,9 @@ public class Act_CustDetail01 extends Activity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setTitle("客户详细资料");
+        final Act_CustDetail01 ctx = Act_CustDetail01.this;
+        final LinearLayout layout = new LinearLayout(ctx);
+        final Intent thisIntent = getIntent();
 
         // setContentView(R.layout.activity_act__cust_detail01);
         new AsyncTask<Void, Void, String>() {
@@ -41,9 +49,7 @@ public class Act_CustDetail01 extends Activity {
                 // TODO bind data to the list of this page:
                 JSONObject jsobj = null;
                 try {
-                    final Act_CustDetail01 ctx = Act_CustDetail01.this;
                     jsobj = new JSONArray(result).getJSONObject(0);
-                    LinearLayout layout = new LinearLayout(ctx);
                     layout.setOrientation(LinearLayout.VERTICAL);
                     TextView title = new TextView(ctx);
                     title.setPadding(10, 10, 10, 10);
@@ -79,6 +85,7 @@ public class Act_CustDetail01 extends Activity {
 
         //加载上跟进信息：用LISTVIEW
         new AsyncTask<Void, Void, String>() {
+
             @Override
             protected void onPostExecute(String result) {
                 // TODO Auto-generated method stub
@@ -153,7 +160,9 @@ public class Act_CustDetail01 extends Activity {
 
                                         man = obj.getString("EmpID_DisplayText");
                                     }
-                                    viewHolder.description.setBackgroundColor(Color.parseColor("#FFE7FFC2"));
+
+                                    viewHolder.description.setBackgroundColor(Color.YELLOW);
+                                    viewHolder.description.setTextColor(Color.RED);
                                     viewHolder.description.setText(obj.getString("Memo") + //跟进内容
                                             " By " + man + "@" + //by whom @ when
                                             obj.getString("CreateTime") + ".");
@@ -183,6 +192,60 @@ public class Act_CustDetail01 extends Activity {
                             return false;
                         }
                     });
+
+                    layout.addView(lv);
+
+
+                    final EditText memo = new EditText(ctx);
+                    memo.setHint("点击添加跟进内容");
+                    memo.setMinLines(3);
+
+
+                    final Button b = new Button(ctx);
+                    b.setText("OK！");
+                    b.setOnClickListener(new View.OnClickListener() {
+                        @Override
+                        public void onClick(View v) {
+                            new AsyncTask<Void, Void, String>() {
+                                @Override
+                                protected void onPostExecute(String result) {
+                                    // TODO Auto-generated method stub
+                                    super.onPostExecute(result);
+
+                                    //RELOAD PAGE:
+                                    Toast.makeText(Act_CustDetail01.this, "" + result, Toast.LENGTH_LONG).show();
+                                    startActivity(thisIntent);
+                                    finish();
+                                }
+
+
+
+                                @Override
+                                protected String doInBackground(Void... arg0) {
+                                    try {
+                                        LinkedList params = new LinkedList<BasicNameValuePair>();
+                                        //Memo:"747474",ID:"",CompanyID:"6"}
+                                        //http://192.168.1.58:8007/CustomerManage/AddFollow
+                                        Form f = new Form();
+                                        f.CompanyID=""+Act_CustDetail01.this.getIntent().getExtras().getInt("id");
+                                        f.Memo=memo.getText().toString();
+                                        params.add(new BasicNameValuePair("json", "" + new Gson() .toJson(f)));
+                                        return CwyWebJSON.postToUrl(((MyApplication) getApplication()).getSiteUrl() + "/CustomerManage/AddFollow", params);
+                                    } catch (Exception e) {
+                                        //Toast.makeText(Login.this,"晕，是不是网址不对啊？",Toast.LENGTH_LONG).show();
+                                        //上句好像加上也不起作用，不知道为啥。。。
+                                        e.printStackTrace();
+                                    }
+                                    return "";
+                                }
+                            }.execute();
+
+                        }
+                    });
+
+
+                    layout.addView(memo);
+                    layout.addView(b);
                 } catch (JSONException e) {
                     e.printStackTrace();
                 }
@@ -196,11 +259,10 @@ public class Act_CustDetail01 extends Activity {
                     params.add(new BasicNameValuePair("rp", "20"));
                     params.add(new BasicNameValuePair("sortname", "ID"));
                     params.add(new BasicNameValuePair("sortorder", "desc"));
-                    params.add(new BasicNameValuePair("query", "{{pid:\"" + Act_CustDetail01.this.getIntent().getExtras().getInt("id") + "\"}}"));
+                    params.add(new BasicNameValuePair("query", "{pid:\"" + Act_CustDetail01.this.getIntent().getExtras().getInt("id") + "\"}"));
                     params.add(new BasicNameValuePair("qtype", "sql"));
                     params.add(new BasicNameValuePair("iegohell", "1413782533798"));
-                    URL url = new URL(((MyApplication) getApplication()).getSiteUrl() + "/CustomerManage/CompanyFollow_GetList" +
-                            Act_CustDetail01.this.getIntent().getExtras().getInt("id"));
+                    URL url = new URL(((MyApplication) getApplication()).getSiteUrl() + "/CustomerManage/CompanyFollow_GetList");
                     return CwyWebJSON.postToUrl(url.toString(), params);
                 } catch (Exception e) {
                     e.printStackTrace();
@@ -209,7 +271,6 @@ public class Act_CustDetail01 extends Activity {
             }
         }.execute();
     }
-
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
@@ -235,5 +296,11 @@ public class Act_CustDetail01 extends Activity {
 
     private static class ViewHolder {
         TextView description;
+    }
+
+    private static class Form {
+        String Memo;
+        String CompanyID;
+        String ID="";
     }
 }
