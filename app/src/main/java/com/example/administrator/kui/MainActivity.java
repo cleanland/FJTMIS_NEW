@@ -100,37 +100,9 @@ public class MainActivity extends Activity {
                 @Override
                 protected String doInBackground(Void... arg0) {
                     try {
-                        //{ user: user, pwd: pwd,rand:new Date().toString() }
-                        EditText siteUrl = (EditText) findViewById(R.id.siteUrl);
-                        String siteUrlStr = siteUrl.getText().toString();
-
-                        EditText acc = (EditText) findViewById(R.id.account);
-                        String accStr = acc.getText().toString();
-
-                        EditText pwd = (EditText) findViewById(R.id.pwd);
-                        String pwdStr = pwd.getText().toString();
-
-                        //将网址写入设置文件。下次就不必填写了。
-                        SharedPreferences preferences = getSharedPreferences("user", Context.MODE_PRIVATE);
-                        SharedPreferences.Editor editor = preferences.edit();
-                        editor.putString("siteUrl", siteUrlStr);
-                        editor.putString("account", accStr);
-                        editor.putString("pwd", pwdStr);
-                        editor.commit();
-
-                        //将域名写入全局变量：
-                        ((MyApplication) getApplication()).setSiteUrl(siteUrlStr);
-
-
                         LinkedList params = new LinkedList<BasicNameValuePair>();
-                        params.add(new BasicNameValuePair("user", "" + accStr));
-                        params.add(new BasicNameValuePair("pwd", "" + pwdStr));
-                        params.add(new BasicNameValuePair("rand", new Date().toString()));
-                        CwyWebJSON.client = new DefaultHttpClient();
-                        return CwyWebJSON.postToUrl(((MyApplication) getApplication()).getSiteUrl() + "/home/logon", params);
+                        return CwyWebJSON.postToUrl(((MyApplication) getApplication()).getSiteUrl() + "/office/GetMyBlogIdOfToday", params);
                     } catch (Exception e) {
-                        //Toast.makeText(Login.this,"晕，是不是网址不对啊？",Toast.LENGTH_LONG).show();
-                        //上句好像加上也不起作用，不知道为啥。。。
                         e.printStackTrace();
                     }
                     return "";
