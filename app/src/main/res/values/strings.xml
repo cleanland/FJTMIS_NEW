@@ -13,5 +13,6 @@
     <string name="title_activity_mainpage">mainpage</string>
     <string name="title_activity_main">MainActivity</string>
     <string name="title_activity_act__cust_detail01">Act_CustDetail01</string>
+    <string name="add_blog">添加工作日志</string>
 
 </resources>

@@ -197,6 +197,9 @@ public class Act_CustDetail01 extends Activity {
 
 
                     final EditText memo = new EditText(ctx);
+                    //android:background="@drawable/backwithborder"
+                    memo.setBackgroundResource(R.drawable.backwithborder);
+
                     memo.setHint("点击添加跟进内容");
                     memo.setMinLines(3);
 
@@ -219,7 +222,6 @@ public class Act_CustDetail01 extends Activity {
                                 }
 
 
-
                                 @Override
                                 protected String doInBackground(Void... arg0) {
                                     try {
@@ -227,9 +229,9 @@ public class Act_CustDetail01 extends Activity {
                                         //Memo:"747474",ID:"",CompanyID:"6"}
                                         //http://192.168.1.58:8007/CustomerManage/AddFollow
                                         Form f = new Form();
-                                        f.CompanyID=""+Act_CustDetail01.this.getIntent().getExtras().getInt("id");
-                                        f.Memo=memo.getText().toString();
-                                        params.add(new BasicNameValuePair("json", "" + new Gson() .toJson(f)));
+                                        f.CompanyID = "" + Act_CustDetail01.this.getIntent().getExtras().getInt("id");
+                                        f.Memo = memo.getText().toString();
+                                        params.add(new BasicNameValuePair("json", "" + new Gson().toJson(f)));
                                         return CwyWebJSON.postToUrl(((MyApplication) getApplication()).getSiteUrl() + "/CustomerManage/AddFollow", params);
                                     } catch (Exception e) {
                                         //Toast.makeText(Login.this,"晕，是不是网址不对啊？",Toast.LENGTH_LONG).show();
@@ -301,6 +303,6 @@ public class Act_CustDetail01 extends Activity {
     private static class Form {
         String Memo;
         String CompanyID;
-        String ID="";
+        String ID = "";
     }
 }

@@ -4,7 +4,7 @@
     android:layout_height="match_parent"
     android:id="@+id/rootLayout"
     android:orientation="vertical"
-    android:padding="20dp">
+    android:padding="10dp">
 
     <LinearLayout
         android:orientation="horizontal"
@@ -40,6 +40,8 @@
         <EditText
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:background="@null"
+            android:height="33dp"
             android:id="@+id/siteUrl"
             android:layout_weight="1"
             android:text="" />
@@ -49,7 +51,6 @@
         android:orientation="horizontal"
         android:layout_width="fill_parent"
         android:layout_height="wrap_content">
-
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -60,6 +61,8 @@
         <EditText
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:background="@null"
+            android:height="33dp"
             android:id="@+id/account"
             android:layout_weight="1" />
     </LinearLayout>
@@ -69,7 +72,6 @@
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
         android:id="@+id/linearLayout">
-
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -80,14 +82,17 @@
         <EditText
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:background="@null"
+            android:height="33dp"
             android:id="@+id/pwd"
             android:password="true"
             android:layout_weight="1" />
 
         <Button
             android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
+            android:layout_height="38dp"
             android:text="登 录"
-            android:id="@+id/loginBtn" />
+            android:id="@+id/loginBtn"
+            android:textSize="10dp" />
     </LinearLayout>
 </LinearLayout>

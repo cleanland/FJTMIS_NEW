@@ -3,20 +3,28 @@ package com.example.administrator.kui;
 import android.app.Activity;
 import android.app.Fragment;
 import android.app.FragmentManager;
+import android.content.Context;
+import android.content.Intent;
+import android.content.SharedPreferences;
 import android.graphics.Color;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v13.app.FragmentPagerAdapter;
 import android.support.v4.view.ViewPager;
-import android.view.Gravity;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.EditText;
 import android.widget.TextView;
 
-import com.example.administrator.kui.dummy.BlogFragment;
+import org.apache.http.impl.client.DefaultHttpClient;
+import org.apache.http.message.BasicNameValuePair;
 
+import java.util.Date;
+import java.util.LinkedList;
 import java.util.Locale;
 
 
@@ -62,8 +70,73 @@ public class MainActivity extends Activity {
         // Handle action bar item clicks here. The action bar will
         // automatically handle clicks on the Home/Up button, so long
         // as you specify a parent activity in AndroidManifest.xml.
-        int id = item.getItemId();
-        if (id == R.id.action_settings) {
+        final int[] id = {item.getItemId()};
+        if (id[0] == R.id.action_settings) {
+            return true;
+        }
+        if (id[0] == R.id.action_addblog) {
+            new AsyncTask<Void, Void, String>() {
+                @Override
+                protected void onPostExecute(String result) {
+                    // TODO Auto-generated method stub
+                    super.onPostExecute(result);
+
+                    int tid = 0;
+                    try {
+                        tid = Integer.parseInt(result);
+                    } catch (Exception e) {
+                        //Toast.makeText(Login.this,"晕，是不是网址不对啊？",Toast.LENGTH_LONG).show();
+                        //上句好像加上也不起作用，不知道为啥。。。
+                        e.printStackTrace();
+                    }
+                    if (tid == 0) return;
+                    Log.i("tid--------------------------------", ""+tid);
+
+                    Intent newIntent = new Intent(MainActivity.this, Act_BlogDetail.class);
+                    newIntent.putExtra("id", tid);
+                    startActivity(newIntent);
+                }
+
+                @Override
+                protected String doInBackground(Void... arg0) {
+                    try {
+                        //{ user: user, pwd: pwd,rand:new Date().toString() }
+                        EditText siteUrl = (EditText) findViewById(R.id.siteUrl);
+                        String siteUrlStr = siteUrl.getText().toString();
+
+                        EditText acc = (EditText) findViewById(R.id.account);
+                        String accStr = acc.getText().toString();
+
+                        EditText pwd = (EditText) findViewById(R.id.pwd);
+                        String pwdStr = pwd.getText().toString();
+
+                        //将网址写入设置文件。下次就不必填写了。
+                        SharedPreferences preferences = getSharedPreferences("user", Context.MODE_PRIVATE);
+                        SharedPreferences.Editor editor = preferences.edit();
+                        editor.putString("siteUrl", siteUrlStr);
+                        editor.putString("account", accStr);
+                        editor.putString("pwd", pwdStr);
+                        editor.commit();
+
+                        //将域名写入全局变量：
+                        ((MyApplication) getApplication()).setSiteUrl(siteUrlStr);
+
+
+                        LinkedList params = new LinkedList<BasicNameValuePair>();
+                        params.add(new BasicNameValuePair("user", "" + accStr));
+                        params.add(new BasicNameValuePair("pwd", "" + pwdStr));
+                        params.add(new BasicNameValuePair("rand", new Date().toString()));
+                        CwyWebJSON.client = new DefaultHttpClient();
+                        return CwyWebJSON.postToUrl(((MyApplication) getApplication()).getSiteUrl() + "/home/logon", params);
+                    } catch (Exception e) {
+                        //Toast.makeText(Login.this,"晕，是不是网址不对啊？",Toast.LENGTH_LONG).show();
+                        //上句好像加上也不起作用，不知道为啥。。。
+                        e.printStackTrace();
+                    }
+                    return "";
+                }
+            }.execute();
+
             return true;
         }
         return super.onOptionsItemSelected(item);
@@ -120,14 +193,14 @@ public class MainActivity extends Activity {
             // getItem is called to instantiate the fragment for the given page.
             // Return a PlaceholderFragment (defined as a static inner class below).
             // 创建并返回FRA。。。。
-            switch (position){
-                case 0:{
+            switch (position) {
+                case 0: {
                     return new Fra_BlogList();
                 }
-                case 1:{
+                case 1: {
                     return new Fra_CustList();
                 }
-                case 2:{
+                case 2: {
                     return new fra();
                 }
             }
