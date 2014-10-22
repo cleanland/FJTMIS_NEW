@@ -8,6 +8,7 @@ import android.database.DataSetObserver;
 import android.graphics.Color;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -17,13 +18,17 @@ import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.ListAdapter;
 import android.widget.ListView;
+import android.widget.SimpleAdapter;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import org.apache.http.impl.client.DefaultHttpClient;
 import org.apache.http.message.BasicNameValuePair;
 
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.LinkedList;
+import java.util.Map;
 
 
 public class Login extends Activity {
@@ -46,7 +51,7 @@ public class Login extends Activity {
         EditText siteUrl = (EditText) findViewById(R.id.siteUrl);
         siteUrl.setText(((MyApplication) getApplication()).getSiteUrl());
 
-        if(siteUrl.getText().toString().isEmpty())
+        if (siteUrl.getText().toString().isEmpty())
             siteUrl.setText("http://fjtmis.huijumall.com");
 
         EditText acc = (EditText) findViewById(R.id.account);
@@ -103,6 +108,7 @@ public class Login extends Activity {
                             params.add(new BasicNameValuePair("user", "" + accStr));
                             params.add(new BasicNameValuePair("pwd", "" + pwdStr));
                             params.add(new BasicNameValuePair("rand", new Date().toString()));
+                            CwyWebJSON.client=new DefaultHttpClient();
                             return CwyWebJSON.postToUrl(((MyApplication) getApplication()).getSiteUrl() + "/home/logon", params);
                         } catch (Exception e) {
                             //Toast.makeText(Login.this,"晕，是不是网址不对啊？",Toast.LENGTH_LONG).show();
@@ -216,6 +222,12 @@ public class Login extends Activity {
                 });
                 layout.addView(lv);
                 return;
+            }
+
+            if (false) {
+                new SimpleAdapter(this,new ArrayList<Map<String, String>>(),111,new String[]{},new int[]{});
+                Log.i("klsdhfjklaaaaaaaaaaaa", "" + new Button(this).getResources());
+
             }
             //endregion
 

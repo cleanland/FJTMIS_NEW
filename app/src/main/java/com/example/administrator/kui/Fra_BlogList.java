@@ -102,30 +102,35 @@ public class Fra_BlogList extends Fragment {
                                 viewHolder = new ViewHolder();
                                 convertView = inflater.inflate(R.layout.listitem_min, parent, false);
                                 viewHolder.description = (TextView) convertView.findViewById(R.id.textView);
-                                try {
-                                    final JSONObject obj = listjson.getJSONObject(position);
-                                    viewHolder.description.setText(obj.getString("RegEmpID_DisplayText") + "@" + obj.getString("Title"));
-                                    viewHolder.description.setOnClickListener(new View.OnClickListener() {
-                                        @Override
-                                        public void onClick(View v) {
-                                            try {
-                                                JSONObject pos = listjson.getJSONObject(position);
-                                                int id = pos.getInt("ID");
-                                                Intent newIntent = new Intent(ctx, Act_BlogDetail.class);
-                                                newIntent.putExtra("id", id);
-                                                startActivity(newIntent);
-                                            } catch (JSONException e) {
-                                                e.printStackTrace();
-                                            }
-                                        }
-                                    });
-                                } catch (JSONException e) {
-                                    e.printStackTrace();
-                                }
+
                                 convertView.setTag(viewHolder);
                             } else {
                                 viewHolder = (ViewHolder) convertView.getTag();
                             }
+
+                            //处理完列表优化之后才可以做以下的事：否则数据错乱！！！！！★★★★★★★★
+                            //但是这其实不就效率又很低下了？有啥优化可言呢？
+                            try {
+                                final JSONObject obj = listjson.getJSONObject(position);
+                                viewHolder.description.setText(obj.getString("RegEmpID_DisplayText") + "@" + obj.getString("Title"));
+                                viewHolder.description.setOnClickListener(new View.OnClickListener() {
+                                    @Override
+                                    public void onClick(View v) {
+                                        try {
+                                            JSONObject pos = listjson.getJSONObject(position);
+                                            int id = pos.getInt("ID");
+                                            Intent newIntent = new Intent(ctx, Act_BlogDetail.class);
+                                            newIntent.putExtra("id", id);
+                                            startActivity(newIntent);
+                                        } catch (JSONException e) {
+                                            e.printStackTrace();
+                                        }
+                                    }
+                                });
+                            } catch (JSONException e) {
+                                e.printStackTrace();
+                            }
+
                             // set item values to the viewHolder:
                             return convertView;
                         }

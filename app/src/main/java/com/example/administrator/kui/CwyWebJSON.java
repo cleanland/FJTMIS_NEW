@@ -93,6 +93,7 @@ public class CwyWebJSON {
         // params.add(new BasicNameValuePair("param2", "第二个参数"));
         String result = "";
         try {
+
             HttpPost postMethod = new HttpPost(url);
             postMethod.setEntity(new UrlEncodedFormEntity(params, "utf-8")); // 将参数填入POST
 
