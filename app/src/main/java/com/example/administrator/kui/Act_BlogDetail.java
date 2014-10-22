@@ -6,7 +6,10 @@ import android.os.AsyncTask;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
 import android.webkit.WebView;
+import android.widget.EditText;
+import android.widget.FrameLayout;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
@@ -69,6 +72,9 @@ public class Act_BlogDetail extends Activity {
                     title.setBackgroundColor(Color.GRAY);
                     title.setText(jsobj.getString("RegEmpID_DisplayText") + "@" + jsobj.getString("Title"));
 
+                    FrameLayout frame = new FrameLayout(ctx);
+                    frame.removeAllViews();
+
                     WebView wx = new WebView(ctx);
                     if (false) {
                         wx.loadData(
@@ -82,12 +88,17 @@ public class Act_BlogDetail extends Activity {
                             "text/html; charset=UTF-8",
                             null
                     );//这种写法可以正确解码
+                    frame.addView(wx);
+                    frame.setLayoutParams(new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT,LinearLayout.LayoutParams.WRAP_CONTENT,1));
 
                     layout.addView(title);
-                    layout.addView(wx);
+                    layout.addView(frame);
+
+                    EditText newblog=new EditText(Act_BlogDetail.this);
+
+                    layout.addView(newblog);
 
                     ctx.setContentView(layout);
-
                 } catch (JSONException e) {
                     e.printStackTrace();
                 }
