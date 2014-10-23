@@ -31,6 +31,12 @@
             android:name="com.example.administrator.kui.Act_CustDetail01"
             android:label="@string/title_activity_act__cust_detail01" >
         </activity>
+
+        <service android:name="com.example.administrator.kui.DaemonService">
+            <intent-filter>
+                <action android:name="com.example.administrator.kui.xxxxxxxxxx" />
+            </intent-filter>
+        </service>
     </application>
 
 </manifest>
