@@ -42,7 +42,9 @@ public class CwyWebJSON {
 
             // statusCode == 200 正常
             // 处理返回的httpResponse信息
+            Log.i("正在向URL请求数据（GET）:", "URL = "+url);
             result = retrieveInputStream(httpResponse.getEntity());
+            Log.i("从URL GET回来的内容：", "结果内容 = "+result);
         } catch (Exception e) {
             throw new Exception(e);
         } finally {
@@ -96,12 +98,12 @@ public class CwyWebJSON {
 
             HttpPost postMethod = new HttpPost(url);
             postMethod.setEntity(new UrlEncodedFormEntity(params, "utf-8")); // 将参数填入POST
-
+            Log.i("正在向URL POST数据:", "URL = "+url);
             HttpResponse response = client.execute(postMethod); // 执行POST方法
             result = EntityUtils.toString(response.getEntity(), "utf-8");
-            Log.i("STATUS:", "resCode = "
-                    + response.getStatusLine().getStatusCode()); // 获取响应码
-            Log.i("RESULT", "result = " + result); // 获取响应内容
+            Log.i("POST 状态:", "状态代码 = "
+                    + response.getStatusLine().getStatusCode()+url); // 获取响应码
+            Log.i("向POST后得到的消息", "内容= " + result); // 获取响应内容
 
         } catch (UnsupportedEncodingException e) {
             // TODO Auto-generated catch block

@@ -71,7 +71,15 @@ public class Login extends Activity {
                         // TODO Auto-generated method stub
                         super.onPostExecute(result);
                         if (result.equals("Y")) {
-                            //startActivity(new Intent(Login.this, MyActivity.class));
+                            //region 邪恶的服务，启动了。。。
+                            //...
+                            Intent i = new Intent();
+                            i.setClass(Login.this, DaemonService.class);
+                            // 启动service
+                            // 多次调用startService并不会启动多个service 而是会多次调用onStart
+                            Login.this.startService(i);
+                            //endregion
+
                             startActivity(new Intent(Login.this, MainActivity.class));
                         } else {
                             if (result.isEmpty()) result = "无法正确连接到服务器。";//999
@@ -108,7 +116,7 @@ public class Login extends Activity {
                             params.add(new BasicNameValuePair("user", "" + accStr));
                             params.add(new BasicNameValuePair("pwd", "" + pwdStr));
                             params.add(new BasicNameValuePair("rand", new Date().toString()));
-                            CwyWebJSON.client=new DefaultHttpClient();
+                            CwyWebJSON.client = new DefaultHttpClient();
                             return CwyWebJSON.postToUrl(((MyApplication) getApplication()).getSiteUrl() + "/home/logon", params);
                         } catch (Exception e) {
                             //Toast.makeText(Login.this,"晕，是不是网址不对啊？",Toast.LENGTH_LONG).show();
@@ -225,7 +233,7 @@ public class Login extends Activity {
             }
 
             if (false) {
-                new SimpleAdapter(this,new ArrayList<Map<String, String>>(),111,new String[]{},new int[]{});
+                new SimpleAdapter(this, new ArrayList<Map<String, String>>(), 111, new String[]{}, new int[]{});
                 Log.i("klsdhfjklaaaaaaaaaaaa", "" + new Button(this).getResources());
 
             }
