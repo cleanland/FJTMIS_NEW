@@ -117,13 +117,44 @@ public class CwyWebJSON {
     }
 
     /**
+     * HTML（转码）
+     * HTML STRING 保存到SERVER时，会转码。防止注入。。。显示时就需要反转码
+     *
+     * @param src
+     * @return
+     */
+    public static String escape(String src) {
+        int i;
+        char j;
+        StringBuffer tmp = new StringBuffer();
+        tmp.ensureCapacity(src.length() * 6);
+        for (i = 0; i < src.length(); i++) {
+            j = src.charAt(i);
+            if (Character.isDigit(j) || Character.isLowerCase(j)
+                    || Character.isUpperCase(j))
+                tmp.append(j);
+            else if (j < 256) {
+                tmp.append("%");
+                if (j < 16)
+                    tmp.append("0");
+                tmp.append(Integer.toString(j, 16));
+            } else {
+                tmp.append("%u");
+                tmp.append(Integer.toString(j, 16));
+            }
+        }
+        return tmp.toString();
+    }
+
+    /**
      * HTML。（反（转码））
      * HTML STRING 保存到SERVER时，会转码。防止注入。。。显示时就需要反转码
+     *
      * @param src
      * @return
      */
     public static String unescape(String src) {
-        if(src == null)return null;
+        if (src == null) return null;
         StringBuffer tmp = new StringBuffer();
         tmp.ensureCapacity(src.length());
         int lastPos = 0, pos = 0;
