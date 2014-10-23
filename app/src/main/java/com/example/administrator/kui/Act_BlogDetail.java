@@ -8,6 +8,7 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.webkit.WebView;
+import android.widget.Button;
 import android.widget.EditText;
 import android.widget.FrameLayout;
 import android.widget.LinearLayout;
@@ -19,6 +20,8 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.net.URL;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.LinkedList;
 
 public class Act_BlogDetail extends Activity {
@@ -89,14 +92,33 @@ public class Act_BlogDetail extends Activity {
                             null
                     );//这种写法可以正确解码
                     frame.addView(wx);
-                    frame.setLayoutParams(new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT,LinearLayout.LayoutParams.WRAP_CONTENT,1));
+                    frame.setLayoutParams(new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT, 1));
 
                     layout.addView(title);
                     layout.addView(frame);
 
-                    EditText newblog=new EditText(Act_BlogDetail.this);
+                    //如果是自己的日志，就可以修改：
+                    if (jsobj.getString("AllowEdit").equals("True")) {
+                        LinearLayout editArea = new LinearLayout(ctx);
+                        editArea.setOrientation(LinearLayout.HORIZONTAL);
+                        final EditText newblog = new EditText(Act_BlogDetail.this);
+                        newblog.setHint("点击追加日志内容");
+                        newblog.setLayoutParams(new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT, 1));
+                        editArea.addView(newblog);
 
-                    layout.addView(newblog);
+
+                        Button ok = new Button(ctx);
+                        ok.setText("OK");
+                        ok.setOnClickListener(new View.OnClickListener() {
+                            @Override
+                            public void onClick(View v) {
+                                postToServer(newblog.getText().toString());
+                            }
+                        });
+                        editArea.addView(ok);
+
+                        layout.addView(editArea);
+                    }
 
                     ctx.setContentView(layout);
                 } catch (JSONException e) {
@@ -111,6 +133,34 @@ public class Act_BlogDetail extends Activity {
                     URL url = new URL(((MyApplication) getApplication()).getSiteUrl() + "/Office/GetBlog?id=" +
                             Act_BlogDetail.this.getIntent().getExtras().getInt("id"));
 
+                    return CwyWebJSON.postToUrl(url.toString(), params);
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+                return "";
+            }
+        }.execute();
+    }
+
+    private void postToServer(final String s) {
+        new AsyncTask<Void, Void, String>() {
+            @Override
+            protected void onPostExecute(String result) {
+                super.onPostExecute(result);
+
+                // TODO Reload Page
+                finish();
+                startActivity(Act_BlogDetail.this.getIntent());
+            }
+
+            @Override
+            protected String doInBackground(Void... arg0) {
+                try {
+                    LinkedList params = new LinkedList<BasicNameValuePair>();
+                    String currTime = new SimpleDateFormat("yyyy年MM月dd日 HH:mm:ss").format(new Date(System.currentTimeMillis()));
+                    params.add(new BasicNameValuePair("blogContentTail", "" + CwyWebJSON.escape("<p>" + currTime + "@" + s + "</p>")));
+                    URL url = new URL(((MyApplication) getApplication()).getSiteUrl() + "/Office/AppendBlog?id=" +
+                            Act_BlogDetail.this.getIntent().getExtras().getInt("id"));
                     return CwyWebJSON.postToUrl(url.toString(), params);
                 } catch (Exception e) {
                     e.printStackTrace();
