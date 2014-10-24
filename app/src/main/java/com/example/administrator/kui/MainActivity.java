@@ -27,6 +27,8 @@ import java.util.Date;
 import java.util.LinkedList;
 import java.util.Locale;
 
+import me.imid.swipebacklayout.lib.app.SwipeBackActivity;
+
 
 /**
  * 利用VIEWPAGER，组织FJTMIS的多个页面。导航条。底部。
@@ -36,7 +38,7 @@ import java.util.Locale;
  * 利用VIEWPAGER，组织FJTMIS的多个页面。导航条。底部。
  * 利用VIEWPAGER，组织FJTMIS的多个页面。导航条。底部。
  */
-public class MainActivity extends Activity {
+public class MainActivity extends SwipeBackActivity {
     SectionsPagerAdapter mSectionsPagerAdapter;
     ViewPager mViewPager;
 

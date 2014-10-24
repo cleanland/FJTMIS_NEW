@@ -24,7 +24,9 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.LinkedList;
 
-public class Act_BlogDetail extends Activity {
+import me.imid.swipebacklayout.lib.app.SwipeBackActivity;
+
+public class Act_BlogDetail extends SwipeBackActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {

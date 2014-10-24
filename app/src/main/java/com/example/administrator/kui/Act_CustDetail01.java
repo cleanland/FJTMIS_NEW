@@ -29,8 +29,10 @@ import org.json.JSONObject;
 import java.net.URL;
 import java.util.LinkedList;
 
+import me.imid.swipebacklayout.lib.app.SwipeBackActivity;
 
-public class Act_CustDetail01 extends Activity {
+
+public class Act_CustDetail01 extends SwipeBackActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {

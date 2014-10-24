@@ -1,6 +1,5 @@
 package com.example.administrator.kui;
 
-import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -30,8 +29,11 @@ import java.util.Date;
 import java.util.LinkedList;
 import java.util.Map;
 
+import me.imid.swipebacklayout.lib.app.SwipeBackActivity;
 
-public class Login extends Activity {
+
+public class Login extends SwipeBackActivity {
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
