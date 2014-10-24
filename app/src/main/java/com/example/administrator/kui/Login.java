@@ -78,9 +78,8 @@ public class Login extends Activity {
                             i.setAction("com.example.administrator.kui.xxxxxxxxxx");
                             // 启动service
                             // 多次调用startService并不会启动多个service 而是会多次调用onStart
-                            //Login.this.startService(i);
-                            Login.this.stopService(i);
-                            //Login.this.startService(i);
+                            //Login.this.stopService(i);
+                            Login.this.startService(i);
                             //endregion
 
                             startActivity(new Intent(Login.this, MainActivity.class));
